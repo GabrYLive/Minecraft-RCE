@@ -1,6 +1,6 @@
 # Minecraft Server RCE - TRIPALDI Gabriele
 ## Preambolo:  cos'è un server Minecraft?
-Minecraft è un videgioco sandbox molto popolare che da vari anni è stato acquisito dalla Microsoft Il gioco ha due versioni differenti, la "Java Edition" scritta appunto in Java, e la "Bedrock Edition" una versione multipiattaforma scritta in C++, un server dell abedrock edition non supporta client Java e viceversa.
+Minecraft è un videgioco sandbox molto popolare che da vari anni è stato acquisito dalla Microsoft. Il gioco offre due versioni differenti, la "Java Edition" scritta appunto in Java, e la "Bedrock Edition" una versione multipiattaforma scritta in C++, un server dell abedrock edition non supporta client Java e viceversa.
 Questo progetto si baserà sui server e client basati sulla versione Java, eseguibile solamente su sistemi Windows, Linux e Mac.
 
 ----------
