@@ -90,8 +90,8 @@ Anche Windows, in particolare con le sue versioni più aggiornate. è in grado d
 Tuttavia sotto un punto di vista dell'***impatto***, se non si è interessati a prendere il controllo completo del pc o ad un esflitrazioni dati, modificando opportunamente la classe Java si potrebbe arrecare comunque danni tramite la cancellazione di file sensibili ecc..
   
 ### Fonti/risorse esterne citate
-> * Java Unmarsheler
-> * .. .   
+> * [Java Unmarshaller Security - Turning your data into code execution  (mbechler)](https://github.com/mbechler/marshalsec)
+> * [Paper is a Minecraft game server based on Spigot, designed to greatly improve performance and offer more advanced features and API.](https://papermc.io/)   
 
 
 ---
