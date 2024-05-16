@@ -72,12 +72,12 @@ netcat -lnvp <porta>
    ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Si è scoperto che nella file batch creato sul server per eseguirlo, (quindi non sulla console diretta), compariva un errore segnalante che la classe era stata compilata con una versione successiva e di conseguenza non poteva essere eseguita. Si è così provato a compliare la classe direttamente con la stessa versione che il server è stato compilato (ossia la JDK 1.8.0_101) ed a seguito di ulteriori tentavi si è riusciuti a far eseguire la classe con successo.
 
 ---
-2. <code style="color: darkorange">**Problematica:**</code> Successivamente all'esecuzione dell'iniezione e collegamento tramite reverse-shell, specialmente nella fase di collegamento il server vittima poteva chiudersi inaspettatamente.<br>
-    <code style="color: yellowgreen">**Soluzione:**</code> Tramite i file di log presenti nella cartella del server si è analizzato l'errore: "Server exete maxium -----", questo è dovuto al fatto che di default il server è configurato per avere un tempo (in tick di gioco) massimo di risposta di XXXXXXX tick. Essendo questo valore predefinito troppo basso, non dava il tempo di eseguire e mantenere la connessione al Netcat dell'attaccante. Si è proceduto così ad aumentare questo tempo e per fini pratici lo si è impostato a "-1" in modo da disattivarlo.[<sup>2</sup>](#2-questa-modificva-è-stata-effettuata-sul-file-serverproprities-contenente-la-configurazione-di-base-del-server-alla-riga-max-tick-si-è-sostiuito-il-valore-in--1)
+2. ${{\color{Goldenrod}{{\textbf{\textsf{Problematica:}}}}}}$ Successivamente all'esecuzione dell'iniezione e collegamento tramite reverse-shell, specialmente nella fase di collegamento il server vittima poteva chiudersi inaspettatamente.<br>
+    ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Tramite i file di log presenti nella cartella del server si è analizzato l'errore: "Server exete maxium -----", questo è dovuto al fatto che di default il server è configurato per avere un tempo (in tick di gioco) massimo di risposta di XXXXXXX tick. Essendo questo valore predefinito troppo basso, non dava il tempo di eseguire e mantenere la connessione al Netcat dell'attaccante. Si è proceduto così ad aumentare questo tempo e per fini pratici lo si è impostato a "-1" in modo da disattivarlo.[<sup>2</sup>](#2-questa-modificva-è-stata-effettuata-sul-file-serverproprities-contenente-la-configurazione-di-base-del-server-alla-riga-max-tick-si-è-sostiuito-il-valore-in--1)
 
 ---
 3. ${{\color{orangered}{{\textbf{\textsf{Criticità:}}}}}}$ A seguito della buona riuscita della connessione con questa tecnica di reverse-shell si è notato che il server rimane funzionale ma viene generato per i giocatori un lag/interruzione per entrare nel server.<br>
-<code style="color: yellowgreen">**Possibile raggiro:**</code> Chiaramente questo non ha a che fare con la buona riuscita dell'attacco ma solo ha solo scopo di ridurre la tracciabilità dello stesso. Si può quindi, riscrivendo la classe Java, invece di eseguire direttamente una reverse shell sul server attaccato, la si può far scaricare tramite anche uno script powershell ed eseguirla in modalità nascosta senza impattattare il server di gioco.
+${{\color{yellowgreen}{{\textbf{\textsf{Possibile raggiro:}}}}}}$ Chiaramente questo non ha a che fare con la buona riuscita dell'attacco ma solo ha solo scopo di ridurre la tracciabilità dello stesso. Si può quindi, riscrivendo la classe Java, invece di eseguire direttamente una reverse shell sul server attaccato, la si può far scaricare tramite anche uno script powershell ed eseguirla in modalità nascosta senza impattattare il server di gioco.
 ---
 ##### [1](#poc-e-problematiche-rilevate): Quasi tutti i server di gioco sono impostati con la porta *well-known* '25565', se non diversamente configurati, anche nel nostro caso si è proceduto a lasciare la porta predefinita.
 ##### [2](#problematiche-e-criticità-riscontrate): Questa modificva è stata effettuata sul file `server.proprities` contenente la configurazione di base del server, alla riga `max-tick` si è sostiuito il valore in '-1'.
@@ -88,9 +88,12 @@ C'è in oltre da considerare che l'ambiente utilizzato (Metasploitable3) è prec
 Già utilizzando una buona configurazione di un firewall si riuscirebbe a mitigare l'attacco, l'utilizzo di un ????? antivirus potrebbe rilevare la backdoor se non opportunamente mascherata. 
 Anche Windows, in particolare con le sue versioni più aggiornate. è in grado di rilevare l'esecuzione di script malevoli.
 Tuttavia sotto un punto di vista dell'***impatto***, se non si è interessati a prendere il controllo completo del pc o ad un esflitrazioni dati, modificando opportunamente la classe Java si potrebbe arrecare comunque danni tramite la cancellazione di file sensibili ecc..
-  
+
+---
+
 ### Fonti/risorse esterne citate
-> * [Java Unmarshaller Security - Turning your data into code execution  (mbechler)](https://github.com/mbechler/marshalsec)
+> * [Java Unmarshaller Security - Turning your data into code execution (mbechler)](https://github.com/mbechler/marshalsec)
+
 > * [Paper is a Minecraft game server based on Spigot, designed to greatly improve performance and offer more advanced features and API.](https://papermc.io/)   
 
 
