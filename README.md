@@ -97,5 +97,6 @@ Tuttavia sotto un punto di vista dell'***impatto***, se non si è interessati a 
 ---
 
 <br></br>
+<div dir='rtl'
 
-< *A cura di **TRIPALDI Gabriele***. >
+< *A cura di **TRIPALDI Gabriele*** ></div>
