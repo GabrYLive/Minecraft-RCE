@@ -1,4 +1,4 @@
-# Minecraft Server RCE - TRIPALDI Gabriele
+# Minecraft Server no-auth RCE <br>TRIPALDI Gabriele
 ## Preambolo:  cos'è un server Minecraft?
 Minecraft è un videogioco sandbox molto popolare che da vari anni è stato acquisito dalla Microsoft. Il gioco offre due versioni differenti, la "Java Edition" scritta appunto in Java, e la "Bedrock Edition" una versione multi-piattaforma scritta in C++, un server della bedrock edition non supporta client Java e viceversa.
 Questo progetto si baserà sui server e client basati sulla versione Java, eseguibile solamente su sistemi Windows, Linux e Mac.
@@ -10,7 +10,7 @@ Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi diret
 Visto che il server Vanilla vulnerabile è di difficile reperibilità, si è proceduto tramite risorse esterne a scaricare un server di terze parti molto popolare "Paper" che ha successivamente *patchato* il server ma la sua versione unpatched è più facile da reperire.
 
 **Log4j**: La vulnerabilità si basa sul framework Log4j che consente di gestire il logging dell'applicazione o dei servizi online ed ha anche la possibilità di comunicare con altri servizi sul sistema. Il problema nasce da una funzionalità di lookup delle JNDI (Java Name and Directory Interface), funzione abilitata di default nelle versioni critiche di Log4j, che consente tramite il log, di ottenere delle variabili. In questo caso si forza l'ottenimento di un oggetto Java tramite un server LDAP che può essere potenzialmente ovunque su internet. 
-Minecraft implementa questo framework che sarà la causa della vulnerabilità.
+Minecraft implementa questo framework che sarà la causa della vulnerabilità che consentirà all'attaccante di eseguire codice malevolo senza autenticazione e senza che ci sia un operazione manuale da parte della vittima.
 
 ## L'attacco *"in a nutshell"*
 L'attacco parte sulla creazione di un server LDAP che sarà il punto di ingresso del traffico verso la vittima.
