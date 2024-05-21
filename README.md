@@ -31,11 +31,11 @@ A questo punto il sistema attaccato sarà nel completo controllo dell'attaccante
 ## Tool necessari per l'attacco
 * Per il **Server LDAP** si è utilizzata la classe Java `LDAPRefServer.java` nella sezione jndi della repo GitHub [Marshalsec](https://github.com/mbechler/marshalsec/blob/master/src/main/java/marshalsec/jndi/LDAPRefServer.java) contenente vari tool inerenti *"all'insicurezza"* di Java.
 
-* **JDK 8.1.0_101**: E' necessario l'utilizzo della stessa versione Java con cui il server Minecraft è compilato, altrimenti l'esecuzione della classe malevola sul server non funzionerebbe.
+* **JDK 1.8.0_181**: E' necessario l'utilizzo della stessa versione Java con cui il server Minecraft è compilato, altrimenti l'esecuzione della classe malevola sul server non funzionerebbe.
 * **Python**: Per l'avvio di un server http che consenta l'invio della classe Java.
 * **Netcat**: Per consentire la connesione TCP della vittima all'attaccante in modo da fornire una reverse shell.
 
-# PoC e problematiche rilevate
+# PoC
 **Passaggi partici dell'attacco, a partire dalla preparazione dell'ambiente dell'attaccante fino all'iniezione dell'exploit. Successivamente seguiranno alcuni problemi e risoluzioni di tali che si sono riscontrati durante i tentativi di attacco.**
 
 **1)** Scrittura classe Java e compliarla tramite "javac" con la stessa versione del server vulnerabile: `javac <percorso>/NomeClasseJavaMalevola.jar` che darà in output un file .class essenziale per il server HTTP.
@@ -70,7 +70,7 @@ netcat -lnvp <porta>
 ***Nota:*** *Come anticipato il server in questione è stato direttamente hostato sulla macchina virtaule *Metasploitable3*, per cui il funzionamento dell'attacco e le relative criticità si riferiscono a questo ambiente ad eccezione di alcune problematiche che non hanno uno stretto contatto con l'ambiente ma sono di entità generica.*
 
  1. ${{\color{Goldenrod}{{\textbf{\textsf{Problematica:}}}}}}$ Inizialmente si è proceduto a compliare una classe Java per l'exploit utilizzando una versione predefinita installata nel sistema (nel nostro caso la versione "11.0"), tuttavia si è scoperto che l'exploit non andava a buon fine, interrompendo quindi l'attacco fino alla fase della connessione ed ottenimento da parte del server vittima della classe malevola.<br>
-   ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Si è scoperto che nella file batch creato sul server per eseguirlo, (quindi non sulla console diretta), compariva un errore segnalante che la classe era stata compilata con una versione successiva e di conseguenza non poteva essere eseguita. Si è così provato a compliare la classe direttamente con la stessa versione che il server è stato compilato (ossia la JDK 1.8.0_101) ed a seguito di ulteriori tentavi si è riusciuti a far eseguire la classe con successo.
+   ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Si è scoperto che nella file batch creato sul server per eseguirlo, (quindi non sulla console diretta), compariva un errore segnalante che la classe era stata compilata con una versione successiva e di conseguenza non poteva essere eseguita. Si è così provato a compliare la classe direttamente con la stessa versione che il server è stato compilato (ossia la JDK 1.8.0_181) ed a seguito di ulteriori tentavi si è riusciuti a far eseguire la classe con successo.
 
 ---
 2. ${{\color{Goldenrod}{{\textbf{\textsf{Problematica:}}}}}}$ Successivamente all'esecuzione dell'iniezione e collegamento tramite reverse-shell, specialmente nella fase di collegamento il server vittima poteva chiudersi inaspettatamente.<br>
