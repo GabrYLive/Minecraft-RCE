@@ -69,7 +69,7 @@ python3 -m http.server <porta>
 ```console
 netcat -lnvp <porta>
 ``` 
-[](schermo_attaccante1.png)
+![schermo_attaccante1](schermo_attaccante1.png)
 **A questo punto l'ambiente dell'attaccante è pronto, è ora possibile l'inizio della fase di iniezione.**
 
 ***Nota:*** *Per l'iniezione non è necessario che sia sempre lo stesso attaccante/macchina ad eseguire questi passaggi, perciò per questioni di ottimizzazione e per non appesantire eccessivamente le macchine virtuali, l'iniezione verrà effettuata direttamente dalla macchina host, si è proceduto così all'apertura della porta 25565[<sup>1</sup>](#1-quasi-tutti-i-server-di-gioco-sono-impostati-con-la-porta-well-known-25565-se-non-diversamente-configurati-anche-nel-nostro-caso-si-è-proceduto-a-lasciare-la-porta-predefinita) di VirtualBox per consentire all'host di raggiungere il server vittima.*
@@ -95,7 +95,7 @@ netcat -lnvp <porta>
 ---
 3. ${{\color{Goldenrod}{{\textbf{\textsf{Problematica:}}}}}}$ Successivamente all'esecuzione dell'iniezione e collegamento tramite reverse-shell, specialmente nella fase di collegamento il server vittima poteva chiudersi inaspettatamente.<br>
     ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Tramite i file di log presenti nella cartella del server si è analizzato l'errore: *`"A single server tick took 60.00 seconds (should be me max 0.05)"`*. Questo è dovuto al fatto che di default il server è configurato per avere un tempo (in tick di gioco) massimo di risposta di 60000 tick (60 millisecondi), essendo il tempo di risposta standard 50 tick. Essendo questo valore predefinito troppo basso, non dava il tempo di mantenere la connessione al Netcat dell'attaccante. Si è proceduto così ad aumentare questo tempo e per fini pratici lo si è impostato a "-1" in modo da disattivarlo.[<sup>2</sup>](#2-questa-modifica-è-stata-effettuata-sul-file-serverproperties-contenente-la-configurazione-di-base-del-server-alla-riga-max-tick-time-si-è-sostituito-il-valore-in--1)
-    [](server_crash_tick.png)
+    ![server_crash_tick](server_crash_tick.png)
 
 ---
 4. ${{\color{orangered}{{\textbf{\textsf{Criticità:}}}}}}$ A seguito della buona riuscita della connessione con questa tecnica di reverse-shell si è notato che il server rimane funzionale ma viene generato per i giocatori un lag/interruzione per entrare nel server.<br>
