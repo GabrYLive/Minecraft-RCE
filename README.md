@@ -139,4 +139,4 @@ Spigot, designed to greatly improve performance and offer more advanced features
 <br>
 <div dir='rtl'
 
-< _A cura di **TRIPALDI Gabriele**_ ></div>
+_A cura di **TRIPALDI Gabriele**_</div>
