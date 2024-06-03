@@ -95,6 +95,7 @@ netcat -lnvp <porta>
 ---
 3. ${{\color{Goldenrod}{{\textbf{\textsf{Problematica:}}}}}}$ Successivamente all'esecuzione dell'iniezione e collegamento tramite reverse-shell, specialmente nella fase di collegamento il server vittima poteva chiudersi inaspettatamente.<br>
     ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Tramite i file di log presenti nella cartella del server si è analizzato l'errore: *`"A single server tick took 60.00 seconds (should be me max 0.05)"`*. Questo è dovuto al fatto che di default il server è configurato per avere un tempo (in tick di gioco) massimo di risposta di 60000 tick (60 millisecondi), essendo il tempo di risposta standard 50 tick. Essendo questo valore predefinito troppo basso, non dava il tempo di mantenere la connessione al Netcat dell'attaccante. Si è proceduto così ad aumentare questo tempo e per fini pratici lo si è impostato a "-1" in modo da disattivarlo.[<sup>2</sup>](#2-questa-modifica-è-stata-effettuata-sul-file-serverproperties-contenente-la-configurazione-di-base-del-server-alla-riga-max-tick-time-si-è-sostituito-il-valore-in--1)
+    
     ![server_crash_tick](server_crash_tick.png)
 
 ---
