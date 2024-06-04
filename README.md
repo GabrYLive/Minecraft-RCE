@@ -1,5 +1,5 @@
 # Minecraft Server no-auth RCE <br>TRIPALDI Gabriele
-
+---
 ## Threat Model
 *L'attaccante:*
 - Riesce a comunicare con il server vulnerabile;
