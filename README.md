@@ -16,13 +16,13 @@ Minecraft è un videogioco sandbox molto popolare che da vari anni è stato acqu
 Minecraft implementa questo framework che sarà la causa della vulnerabilità, consentendo all'attaccante di eseguire codice malevolo da remoto senza autenticazione e senza che ci sia un operazione manuale da parte della vittima.
 
 Dalla versione 1.7 fino alla 1.18 del gioco è stata trovata la vulnerabilità zero-day **CVE-2021-44228**, meglio nota come Log4Shell.
+Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi direttamente sostituendo la versione nella repository ufficiale per i client. 
+Le patch sono automatiche nei confronti dei giocatori prevenendo gli attacchi verso i client, non è quindi possibile effettuare questo attacco nei confronti di quest ultimi.
 
-Le patch di Microsoft sono automatiche nei confronti dei giocatori prevenendo gli attacchi verso i client, non è quindi possibile effettuare questo attacco nei confronti di quest ultimi.
-Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi direttamente sostituendo la versione nella repository ufficiale per i client. Questi server sono chiamati "Vanilla", ossia senza modifiche del server stesso, tuttavia non sono in grado di prevenire l'abuso di cheat all'interno del gioco non offrendo funzionalità aggiuntive. Per questo motivo sono stati creati dalla community, versioni di terze parti (es: Bukkit, Spigot, PaperMC) che consentono maggior sicurezza e l'installazione di plugins scritti in Java.
+I server ufficiali sono chiamati "Vanilla", ossia senza modifiche del server stesso, tuttavia non sono in grado di prevenire l'abuso di cheat all'interno del gioco non offrendo funzionalità aggiuntive. Per questo motivo sono stati creati dalla community, versioni di terze parti (es: Bukkit, Spigot, PaperMC) che consentono maggior sicurezza e l'installazione di plugins scritti in Java.
 
-Il problema si pone però lato server, se l'host non effettua manualmente la patch del server in base alla versione di riferimento [(vedi nota Mojang/Microsoft)](#fontirisorse-esterne-citate), l'exploit potrebbe avere successo. I server terzi, al contrario di quelli ufficiali, tendono ad utilizzare delle tecniche di aggiornamento automatico (obbligatorio però il riavvio del server per la discovery delle patch) rendendo maggiormente più difficile l'attacco.
+Il problema si pone infatti lato server, se l'host non effettua manualmente la patch del server in base alla versione di riferimento [(vedi nota Mojang/Microsoft)](#fontirisorse-esterne-citate), l'exploit potrebbe avere successo. I server terzi, al contrario di quelli Vanilla, tendono ad utilizzare delle tecniche di aggiornamento automatico (obbligatorio però il riavvio del server per la discovery delle patch) rendendo maggiormente più difficile l'attacco.
 Per questo motivo (e per non appesantire eccessivamente il sistema) si è scelto l'utilizzo del server Vanilla 1.8.1 come server vittima.
-
 
 ## L'attacco *"in a nutshell"*
 L'attacco parte sulla creazione di un server LDAP che sarà il punto di ingresso del traffico verso la vittima.
