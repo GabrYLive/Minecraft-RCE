@@ -13,15 +13,15 @@ Minecraft è un videogioco sandbox molto popolare che da vari anni è stato acqu
 
 ## La vulnerabilità del server
 **Log4j**: La vulnerabilità si basa sul framework Log4j che consente di gestire il logging dell'applicazione o dei servizi online offrendo anche la possibilità di comunicare con altri servizi sul sistema. Il problema nasce da una funzionalità  fare il *lookup* e risolvere variabili tramite il protocollo JNDI (Java Name and Directory Interface), funzione abilitata di default nelle versioni critiche di Log4j. In questo caso si forza l'ottenimento di un oggetto Java tramite un server LDAP che può essere potenzialmente ovunque su internet. 
-Minecraft implementa questo framework che sarà la causa della vulnerabilità, consentendo all'attaccante di eseguire codice malevolo senza autenticazione e senza che ci sia un operazione manuale da parte della vittima.
+Minecraft implementa questo framework che sarà la causa della vulnerabilità, consentendo all'attaccante di eseguire codice malevolo da remoto senza autenticazione e senza che ci sia un operazione manuale da parte della vittima.
 
 Dalla versione 1.7 fino alla 1.18 del gioco è stata trovata la vulnerabilità zero-day **CVE-2021-44228**, meglio nota come Log4Shell.
-Come via di mezzo (e per non appesantire eccessivamente il sistema) si è scelta la versione 1.8.0 che support automaticamente anche la versione 1.8.9.
-Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi direttamente sostituendo la versione nella repository ufficiale. Questi server sono chiamati "Vanilla", ossia senza modifiche del server stesso, tuttavia non sono in grado di prevenire l'abuso di cheat all'interno del gioco non offrendo funzionalità aggiuntive. Per questo motivo sono stati creati dalla community, versioni di terze parti (es: Bukkit, Spigot, PaperMC) che consentono maggior sicurezza e l'installazione di plugins scritti in Java.
+
 Le patch di Microsoft sono automatiche nei confronti dei giocatori prevenendo gli attacchi verso i client, non è quindi possibile effettuare questo attacco nei confronti dei giocatori.
+Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi direttamente sostituendo la versione nella repository ufficiale per i client. Questi server sono chiamati "Vanilla", ossia senza modifiche del server stesso, tuttavia non sono in grado di prevenire l'abuso di cheat all'interno del gioco non offrendo funzionalità aggiuntive. Per questo motivo sono stati creati dalla community, versioni di terze parti (es: Bukkit, Spigot, PaperMC) che consentono maggior sicurezza e l'installazione di plugins scritti in Java.
 
 Il problema si pone però lato server, se l'host non effettua manualmente la patch del server in base alla versione di riferimento [(vedi nota Mojang/Microsoft)](#fontirisorse-esterne-citate), l'exploit potrebbe avere successo. I server terzi, al contrario di quelli ufficiali, tendono ad utilizzare delle tecniche di aggiornamento automatico (obbligatorio però il riavvio del server per la discovery delle patch) rendendo maggiormente più difficile l'attacco.
-Per questo motivo si è scelto l'utilizzo del server Vanilla 1.8.????????? come server vittima.
+Per questo motivo (e per non appesantire eccessivamente il sistema) si è scelto l'utilizzo del server Vanilla 1.8.1 come server vittima.
 
 
 ## L'attacco *"in a nutshell"*
@@ -85,7 +85,7 @@ netcat -lnvp <porta>
 
 2) Download di un launcher compatibile con il server, nel caso di server che richiedano l'autenticazione Microsoft si ha bisogno del launcher originale; in caso contrario anche l'utilizzo di launcher di terze parti senza licenza è sufficiente.
 
-3) **Scelta della corretta versione di gioco**,la versione è fondamentale per la buona riuscita dell'exploit, le versioni critiche vanno dalla 1.7 alla 1.18, si scelta la versione 1.8.1 che offre re?????????????????????????? ,l'importante è utilizzare successivamente la corretta versione di Java.
+3) **Scelta della corretta versione di gioco**,la versione è fondamentale per la buona riuscita dell'exploit, le versioni critiche vanno dalla 1.7 alla 1.18, come anticipato nel nostro caso si userà la versione 1.8.1, l'importante è comunque utilizzare la corretta versione di Java.
 
 4) Connessione al server di gioco e invio tramite chat di gioco del payload usando la semantica utile al nostro caso:
  ```shell
