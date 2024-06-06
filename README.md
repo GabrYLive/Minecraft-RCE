@@ -17,7 +17,7 @@ Minecraft implementa questa libreria che sarà la causa della vulnerabilità, co
 
 Dalla versione 1.7 fino alla 1.18 del gioco è stata trovata la vulnerabilità zero-day **CVE-2021-44228**, meglio nota come Log4Shell.
 Microsoft ha successivamente rilasciato una patch per prevenirne gli abusi, sostituendo direttamente la versione nella repository ufficiale per i client. 
-Le patch sono automatiche nei confronti dei giocatori prevenendo gli attacchi verso i client, non è quindi possibile effettuare questo attacco nei confronti di quest ultimi.
+Le patch sono automatiche nei confronti dei giocatori, non è quindi possibile effettuare questo attacco nei confronti dei client.
 
 I server ufficiali sono chiamati "Vanilla", ossia senza modifiche del server stesso, tuttavia non sono in grado di prevenire l'abuso di cheat all'interno del gioco e non offrono funzionalità aggiuntive di sicurezza e personalizzazione. Per questo motivo sono stati creati dalla community, versioni di terze parti (es: Bukkit, Spigot, PaperMC) che consentono maggior sicurezza e l'installazione di plugins scritti in Java.
 
