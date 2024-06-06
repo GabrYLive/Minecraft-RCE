@@ -8,7 +8,7 @@
 - **(!) L'attaccante può ottenere il controllo completo del sistema senza autenticazione e senza alcuna partecipazione da parte della vittima.**
 ---
 ## Preambolo:  cos'è un server Minecraft?
-Minecraft è un videogioco sandbox molto popolare che da vari anni è stato acquisito da Microsoft. Il gioco offre due versioni differenti, la "Java Edition" scritta appunto in Java, e la "Bedrock Edition" una versione multi-piattaforma scritta in C++, un server della bedrock edition non supporta client Java e viceversa.
+Minecraft è un videogioco sandbox molto popolare della casa produttrice "Mojang" che da vari anni è stato acquisito da Microsoft. Il gioco offre due versioni differenti, la "Java Edition" scritta appunto in Java, e la "Bedrock Edition" una versione multi-piattaforma scritta in C++, un server della bedrock edition non supporta client Java e viceversa.
 <br>Questo progetto si baserà sui server e client basati sulla versione Java, eseguibile solamente su sistemi Windows, Linux e Mac.
 
 ## La vulnerabilità del server
