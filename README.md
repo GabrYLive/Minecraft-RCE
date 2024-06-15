@@ -1,4 +1,4 @@
-# Minecraft Server no-auth RCE <br>TRIPALDI Gabriele
+# Minecraft Server no-auth RCE
 ---
 ## Threat Model
 *L'attaccante:*
