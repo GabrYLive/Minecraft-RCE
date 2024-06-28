@@ -139,9 +139,3 @@ Con la versione 2.15.0 di Log4j, la funzione di lookup è stata completamente ri
 > * [NATIONAL VULNERABILITY DATABASE: CVE-2021-44228 [Log4Shell] (~NIST)](https://nvd.nist.gov/vuln/detail/CVE-2021-44228)
 
 > * [JDK 8, Update 121 Release Notes (~Java)](https://www.oracle.com/java/technologies/javase/8u121-relnotes.html)
----
-
-<br>
-<div dir='rtl'
-
-_A cura di **TRIPALDI Gabriele**_</div>
